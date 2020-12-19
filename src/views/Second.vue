@@ -14,15 +14,28 @@
         </el-form-item>
         <el-form-item label="站点" prop="site">
             <el-select v-model="form.site" placeholder="请选择站点" size="small">
-                <el-option label="区域一" value="shanghai"></el-option>
-                <el-option label="区域二" value="beijing"></el-option>
+                <el-option label="美国" value="美国"></el-option>
+                <el-option label="加拿大" value="加拿大"></el-option>
+                <el-option label="墨西哥" value="墨西哥"></el-option>
+                <el-option label="英国" value="英国"></el-option>
+                <el-option label="法国" value="法国"></el-option>
+                <el-option label="德国" value="德国"></el-option>
+                <el-option label="荷兰" value="荷兰"></el-option>
+                <el-option label="意大利" value="意大利"></el-option>
+                <el-option label="西班牙" value="西班牙"></el-option>
+                <el-option label="瑞典" value="瑞典"></el-option>
+                <el-option label="澳大利亚" value="澳大利亚"></el-option>
+                <el-option label="印度" value="印度"></el-option>
+                <el-option label="阿联酋" value="阿联酋"></el-option>
+                <el-option label="沙特阿拉伯" value="沙特阿拉伯"></el-option>
+                <el-option label="日本" value="日本"></el-option>
             </el-select>
         </el-form-item>
         <el-form-item label="用户" prop="user">
             <el-select v-model="form.user" placeholder="请选择用户" size="small">
-                <el-option :label="user.name" :value="user.name" v-for="user in form.user"></el-option>
-                <el-button size="small" @click="selects()">刷新</el-button>
+                <el-option :label="user.name" :value="user.name" v-for="user in lists"></el-option>
             </el-select>
+            <el-button size="small" @click="selects()" style="margin-left:10px">刷新</el-button>
         </el-form-item>
         <el-form-item label="录入时间">
             <el-date-picker size="small"
@@ -39,13 +52,14 @@
   export default {
     data() {
       return {
+        lists:[],
         form: {
           asin:'',
           name: '',
           brand: '',
           seller: '',
           site: '',
-          user: [],
+          user: '',
           time: '',
           status: '1'
         },
@@ -76,7 +90,8 @@
     methods: {
       selects(){
         this.$http.post("/userA/select").then(res=>{
-          this.form.user=res.body
+          this.lists=res.data
+          console.log(this.lists)
         })
       },
       submitForm(formName) {
