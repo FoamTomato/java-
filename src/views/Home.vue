@@ -7,22 +7,22 @@
         <nobr style="float:right;margin-top:.5vh;margin-left:7px;font-family: '微软雅黑';">数独ASIN管理工具</nobr>
       </div>
       <div>
-        <el-button type="text" class="el-icon-remove el-icon-removes" @click="close"></el-button>
-        <el-button type="text" class="el-icon-circle-plus el-icon-circle-pluss" @click="close"></el-button>
+        <el-button type="text" class="el-icon-remove el-icon-removes" @click="subtract"></el-button>
+        <el-button type="text" class="el-icon-circle-plus el-icon-circle-pluss" @click="plus"></el-button>
         <el-button type="text" class="el-icon-error el-icon-errors" @click="close"></el-button>
       </div>
     </el-header>
     <el-container>
       <el-main style="padding: 5px;">
         <template>
-          <el-tabs v-model="activeName" tab-position="left" style="height:92vh" @tab-click="handleClick" lazy>
-            <el-tab-pane label="ASIN查询" name="first">
+          <el-tabs v-model="activeName" tab-position="left" style="height:92vh" @tab-click="handleClick">
+            <el-tab-pane label="ASIN查询" name="first" lazy>
               <first></first>
             </el-tab-pane>
-            <el-tab-pane label="ASIN添加" name="second">
+            <el-tab-pane label="ASIN添加" name="second" lazy>
               <second></second>
             </el-tab-pane>
-            <el-tab-pane label="用户管理" name="third">
+            <el-tab-pane label="用户管理" name="third" lazy>
               <third></third>
             </el-tab-pane>
           </el-tabs>
@@ -32,7 +32,7 @@
   </el-container>
 </template>
 <script>
-import { ipcRenderer } from 'electron'
+import { ipcRenderer,remote } from 'electron'
 import first from './First.vue'
 import second from './Second.vue'
 import third from './Third.vue'
@@ -51,12 +51,30 @@ import third from './Third.vue'
     created(){
     },
     methods: {
+      // 下拉菜单选择
       handleClick(tab, event) {
         console.log(tab, event);
       },
+      // 关闭
       close(){
         ipcRenderer.send('close')
       },
+      // 缩小
+      subtract(){
+        remote.getCurrentWindow().minimize()
+      },
+      // 放大
+      plus(){
+        // 判断是否最大化
+        console.log(remote.getCurrentWindow().isMaximized())
+        if(remote.getCurrentWindow().isMaximized()){
+          // 复原
+          remote.getCurrentWindow().restore();
+        }else{
+          // 最大化
+          remote.getCurrentWindow().maximize()
+        }
+      }
     }
   };
 </script>
@@ -64,6 +82,12 @@ import third from './Third.vue'
 .input-with-select>.el-input-group__append{
   background-color: #065279;
   border-color:#065279;
+  color:#fff
+}
+
+.input-with-select>.el-input-group__append:hover{
+  background-color: IndianRed;
+  border-color:IndianRed;
   color:#fff
 }
 .el-select .el-input {
