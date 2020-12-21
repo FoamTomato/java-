@@ -42,6 +42,17 @@
                 v-model="form.time" disabled>
             </el-date-picker>
         </el-form-item>
+        <el-form-item label="产品图片" prop="avatar">
+          <el-upload
+            class="avatar-uploader"
+            :show-file-list="false"
+            :action="$http.defaults.baseURLs+'/upload2'"
+            :on-success="afterUpload"
+          >
+            <img v-if="form.avatar" :src="form.avatar" fit="cover" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon avatars"></i>
+          </el-upload>
+        </el-form-item>
         <el-form-item>
             <el-button type="submit" class="but" @click="submitForm('form')" size="small">立即创建</el-button>
             <el-button type="submit"  @click="resetForm('form')" size="small">重置</el-button>
@@ -61,7 +72,8 @@
           site: '',
           user: '',
           time: '',
-          status: '1'
+          status: '1',
+          avatar:''
         },
         // 加载圈
         loading:false,
@@ -71,6 +83,7 @@
           brand: [],
           seller: [],
           status: '1',
+          avatar: '',
           asin: [
             { required: true, message: 'asin不能为空', trigger: 'blur' },
           ],
@@ -120,6 +133,10 @@
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
+      },
+      afterUpload(res) {
+        //给图片赋值
+        this.form.avatar = res.url;
       }
     }
   }
@@ -129,5 +146,37 @@
 .but.el-button--primary{
   background-color: #065279;
   border-color: #065279;
+}
+
+.avatar-uploader .el-upload {
+  border: 1px dashed #065279;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: IndianRed;
+}
+.avatar-uploader-icon.avatars:hover {
+  font-size: 24px;
+  color: IndianRed;
+  width: 5rem;
+  height: 5rem;
+  line-height: 5rem;
+  text-align: center;
+}
+.avatar-uploader-icon.avatars{
+  font-size: 24px;
+  color: #065279;
+  width: 5rem;
+  height: 5rem;
+  line-height: 5rem;
+  text-align: center;
+}
+.avatar {
+  width: 5rem;
+  height: 5rem;
+  display: block;
 }
 </style>

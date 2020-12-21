@@ -49,6 +49,15 @@
                     label="被投诉人"
                     width="120">
                     </el-table-column>
+                    <el-table-column prop="avatar" label="图片">
+                      <template slot-scope="scope">
+                        <el-image  :src="scope.row.avatar" fit="cover" style="width:22px;height:22px" lazy :preview-src-list="lists(scope.row.avatar)">
+                          <div slot="error" class="image-slot" style="font-size:20px">
+                            <i class="el-icon-picture-outline"></i>
+                          </div>
+                        </el-image>
+                      </template>
+                    </el-table-column>
                     <el-table-column
                     prop="site"
                     label="站点"
@@ -121,6 +130,13 @@
             this.loading=false
             this.total=res.data.length
             this.tableData=res.data
+            if(this.input3!=''&&this.selects=="1"){
+              if(res.data.length!=0){
+                this.$message.warning("有ASIN被投诉")
+              }else{
+                this.$message.success("该ASIN没有被投诉")
+              }
+            }
           })
         },
         // 页码被改变
@@ -132,6 +148,12 @@
         handleSizeChange(val) {
           this.pageSize=val
           this.select()
+        },
+        // 列表化
+        lists(val){
+          let list=[]
+          list.push(val)
+          return list
         },
         // 删除
         deletes(val){
