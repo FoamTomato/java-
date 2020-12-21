@@ -103,7 +103,7 @@
               if(res.status==200){
                 this.$notify({
                       title: '成功',
-                      message: `asin：${res.data.asin}添加成功`,
+                      message: `asin：${res.data.asin}创建成功`,
                       type: 'success',
                       offset: 25
                 });

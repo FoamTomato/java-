@@ -17,6 +17,7 @@
         <el-main>
             <template>
                 <el-table
+                    v-loading="loading"
                     :data="tableData"
                     size="small"
                     height="78vh"
@@ -62,7 +63,7 @@
                       label="操作"
                       width="100">
                       <template slot-scope="scope">
-                        <el-button @click="deletes(scope.row._id)" type="text" size="small">删除</el-button>
+                        <el-button @click="deletes(scope.row)" type="text" size="small">删除</el-button>
                       </template>
                     </el-table-column>
                 </el-table>
@@ -89,6 +90,8 @@
           selects:"0",
           pageNum: 1,
           pageSize: 50,
+          // 加载圈
+          loading:false,
           total:0,
           tableData: [{
             asin: null,
@@ -113,8 +116,9 @@
           data["selects"]=this.selects
           data["pageSize"]=this.pageSize
           data["pageNum"]=this.pageNum
+          this.loading=true
           this.$http.post("/asin/select",data).then(res=>{
-            console.log(res)
+            this.loading=false
             this.total=res.data.length
             this.tableData=res.data
           })
@@ -131,9 +135,9 @@
         },
         // 删除
         deletes(val){
-          this.$confirm('确认关闭？')
+          this.$confirm(`确认删除${val.asin}?请谨慎操作，不可复原`)
           .then(_ => {
-              this.$http.delete("/asin/deletes/"+val,).then(res=>{
+              this.$http.delete("/asin/deletes/"+val._id,).then(res=>{
                 if(res.status==200){
                   this.select()
                   this.$message.success(res.data.asin+"已删除")

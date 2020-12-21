@@ -1,10 +1,10 @@
 <template>
   <el-container>
-    <el-header style="-webkit-app-region: drag;text-align: right;height:6vh; font-size: 12px;background-color:#065279">
-      <div style="float: left;margin-top:1vh;">
+    <el-header style="-webkit-app-region: drag;text-align: right;height:30px;max-height:30px; font-size: 12px;background-color:#065279">
+      <div style="float: left;margin-top:5px;">
         <img src="../img/logos.png" 
-        style="width: 4vh; height: 4vh;float: left;">
-        <nobr style="float:right;margin-top:.5vh;margin-left:7px;font-family: '微软雅黑';">数独ASIN管理工具</nobr>
+        style="width: 20px; height: 20px;float: left;">
+        <nobr style="float:right;margin-top:1px;margin-left:7px;font-family: '微软雅黑';text-align:center">数独ASIN管理工具</nobr>
       </div>
       <div>
         <el-button type="text" class="el-icon-remove el-icon-removes" @click="subtract"></el-button>
@@ -106,7 +106,7 @@ import third from './Third.vue'
   border-right: 0px;
 }
 .el-icon-remove.el-icon-removes{
-  margin-top:-.6vh;
+  margin-top:-8px;
   font-size: 18px;
   color:brown;
   transition: width 2s;
@@ -115,7 +115,7 @@ import third from './Third.vue'
   -o-transition: width 2s;
 }
 .el-icon-remove.el-icon-removes:hover{
-  margin-top:-.6vh;
+  margin-top:-8px;
   font-size: 18px;
   color:IndianRed;
   transition: width 2s;
@@ -124,7 +124,7 @@ import third from './Third.vue'
   -o-transition: width 2s;
 }
 .el-icon-circle-plus.el-icon-circle-pluss{
-  margin-top:-.6vh;
+   margin-top:-8px;
   font-size: 18px;
   color:#2E8B57;
   transition: width 2s;
@@ -133,7 +133,7 @@ import third from './Third.vue'
   -o-transition: width 2s;
 }
 .el-icon-circle-plus.el-icon-circle-pluss:hover{
-  margin-top:-.6vh;
+   margin-top:-8px;
   font-size: 18px;
   color:IndianRed;
   transition: width 2s;
@@ -142,7 +142,7 @@ import third from './Third.vue'
   -o-transition: width 2s;
 }
 .el-icon-error.el-icon-errors{
-  margin-top:-.6vh;
+   margin-top:-8px;
   font-size: 18px;
   color:DodgerBlue;
   transition: width 2s;
@@ -151,7 +151,7 @@ import third from './Third.vue'
   -o-transition: width 2s;
 }
 .el-icon-error.el-icon-errors:hover{
-  margin-top:-.6vh;
+   margin-top:-8px;
   font-size: 18px;
   color:IndianRed;
   transition: width 2s;
