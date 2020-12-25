@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow,ipcMain } from 'electron'
+import { app, protocol, BrowserWindow,ipcMain,BrowserView } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 // import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -23,8 +23,7 @@ async function createWindow() {
       enableRemoteModule: true
     }
   })
-  
-  // 设置背景颜色
+
   win.setBackgroundColor("#fff")
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -38,6 +37,58 @@ async function createWindow() {
   ipcMain.on('close',()=>{
     // 退出应用程序
     app.exit()
+  })
+
+  const defaultSize = { x: 120, y: 30, width: 894, height: 770}
+
+  var view = null
+  var view2 = null
+  var view3 = null
+
+  ipcMain.on('five',()=>{
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    if(view==null){
+      view= new BrowserView()   //new出对象
+      view.setAutoResize({ width: true, height: true})
+      view.webContents.loadURL('https://www.j-platpat.inpit.go.jp/')
+    }
+    defaultSize["width"]=win.getSize()[0]-120
+    defaultSize["height"]=win.getSize()[1]-50
+    view.setBounds(defaultSize)
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    win.setBrowserView(view)
+  })
+  
+  ipcMain.on('six',()=>{
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    if(view2==null){
+      view2 = new BrowserView()   //new出对象
+      view2.setAutoResize({ width: true, height: true})
+      view2.webContents.loadURL('https://euipo.europa.eu/eSearch/#basic')
+    }
+    defaultSize["width"]=win.getSize()[0]-120
+    defaultSize["height"]=win.getSize()[1]-50
+    view2.setBounds(defaultSize)
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    win.setBrowserView(view2)
+  })
+  ipcMain.on('seven',()=>{
+  
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    if(view3==null){
+      view3 = new BrowserView()   //new出对象
+      view3.setAutoResize({ width: true, height: true})
+      view3.webContents.loadURL('https://trademarks.ipo.gov.uk/ipo-tmtext')
+    }
+    defaultSize["width"]=win.getSize()[0]-120
+    defaultSize["height"]=win.getSize()[1]-50
+    view3.setBounds(defaultSize)
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    win.setBrowserView(view3)
+  })
+  ipcMain.on('closeView',()=>{
+    win.setBrowserView(null)
   })
 }
 
@@ -59,6 +110,12 @@ app.on('activate', () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
+const os = require("os");
+const isWin7 = os.release().startsWith('6.1');
+if(isWin7) {
+  //win7下 ，关闭硬件加速
+  app.disableHardwareAcceleration();
+}
 app.on('ready', async () => {
   // if (isDevelopment && !process.env.IS_TEST) {
   //   // Install Vue Devtools

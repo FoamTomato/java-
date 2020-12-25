@@ -1,35 +1,42 @@
 <template>
     <el-container>
         <el-header style="height:40px;padding:20px">
-              <el-button size="small" @click="dialogVisible=true">添加用户</el-button>
-              <el-button size="small" @click="select()">刷新</el-button>
+            <el-input placeholder="请用逗号分隔开" style="width:30%;margin-right:10px" v-model="input3" @keyup.enter.native="select()" size="small" class="input-with-select"/>
+            <el-button size="small" @click="select()">查找</el-button>
+            <!-- <el-button size="small" @click="dialogVisible=true">添加侵权词</el-button> -->
         </el-header>
+        <!-- 78vh/82vh -->
         <el-main>
             <template>
                 <el-table
                 v-loading="loading"
-                height="78vh"
+                height="78vh" 
                 max-height="95vh"
                 :data="tableData"
                 style="width: 100%">
+
                 <el-table-column
-                    prop="time"
-                    label="日期"
-                    :formatter="dateFormat"
+                    prop="keyWords"
+                    label="侵权词"
                     width="180">
                 </el-table-column>
+
+
                 <el-table-column
-                    prop="name"
-                    label="姓名"> 
+                    prop="time"
+                    :formatter="dateFormat"
+                    label="日期"> 
                 </el-table-column>
-                <el-table-column
+
+
+                <!-- <el-table-column
                     fixed="right"
                     label="操作"
                     width="100">
                     <template slot-scope="scope">
                         <el-button @click="deletes(scope.row)" type="text" size="small">删除</el-button>
                     </template>
-                </el-table-column>
+                </el-table-column> -->
                 </el-table>
                 <el-pagination
                 background
@@ -45,14 +52,14 @@
             </template>
         </el-main>
         <el-dialog
-            title="添加用户"
+            title="添加侵权词"
             size="small"
             :visible.sync="dialogVisible"
             width="60%"
             :before-close="handleClose">
             <el-form ref="form" v-loading="loading"  :model="form"  :rules="rules" status-icon label-width="80px" style="margin-top:20px;padding-right:20px" class="demo-ruleForm">
-              <el-form-item label="用户名" prop="name">
-                  <el-input  size="small"  v-model="form.name"  placeholder="请输入用户名"></el-input>
+              <el-form-item label="侵权词" prop="keyWords">
+                  <el-input  size="small"  v-model="form.keyWords"  placeholder="请输入侵权词"></el-input>
               </el-form-item>
               <el-form-item label="录入时间">
                   <el-date-picker size="small"
@@ -72,19 +79,20 @@
       data() {
         return {
           dialogVisible: false,
+          input3:"",
           form:{
-            name:"",
+            keyWords:"",
             time:"",
             status:"1",
           },
           rules:{
-            name: [
-              { required: true, message: '用户名不能为空', trigger: 'blur' },
+            keyWords: [
+              { required: true, message: '侵权词不能为空', trigger: 'blur' },
             ]
           },
           tableData: [{
             time: '',
-            name: ''
+            keyWords: ''
           }],
           // 加载圈
           loading:false,
@@ -101,12 +109,13 @@
           // 查找用户
           select(){
             let data={}
+            data["input3"]=this.input3
             data["pageSize"]=this.pageSize
             data["pageNum"]=this.pageNum
             this.loading=true
-            this.$http.post("/asinUser/select",data).then(res=>{
+            this.$http.post("/keyWords/select",data).then(res=>{
               this.loading=false
-              this.$http.post("/asinUser/count",data).then(res=>{
+              this.$http.post("/keyWords/count",data).then(res=>{
                 this.total=res.data
               })
               this.tableData=res.data
@@ -116,12 +125,12 @@
             this.$refs[formName].validate((valid) => {
               if (valid) {
                 this.loading=true
-                this.$http.post("/asinUser/add",this.form).then(res=>{
+                this.$http.post("/keyWords/add",this.form).then(res=>{
                   this.loading=false
                   if(res.status==200){
                     this.$notify({
                       title: '成功',
-                      message: `用户${res.data.name}添加成功`,
+                      message: `侵权词${res.data.keyWords}添加成功`,
                       type: 'success',
                       offset: 25
                     });
@@ -153,12 +162,12 @@
         },
         // 删除
         deletes(val){
-          this.$confirm(`确认删除${val.name}?请谨慎操作，不可复原`)
+          this.$confirm(`确认删除${val.keyWords}?请谨慎操作，不可复原`)
           .then(_ => {
-              this.$http.delete("/asinUser/deletes/"+val._id,).then(res=>{
+              this.$http.delete("/keyWords/deletes/"+val._id,).then(res=>{
                 if(res.status==200){
                   this.select()
-                  this.$message.success(res.data.name+"已删除")
+                  this.$message.success(res.data.keyWords+"已删除")
                 }else{
                   this.$message.error("删除异常")
                 }

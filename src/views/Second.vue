@@ -30,10 +30,11 @@
                 <el-option label="沙特阿拉伯" value="沙特阿拉伯"></el-option>
                 <el-option label="日本" value="日本"></el-option>
             </el-select>
+            <el-input v-model="form.siteName" size="small" style="width:20%;margin-left:10px" placeholder="请输入站点名"></el-input>
         </el-form-item>
         <el-form-item label="用户" prop="user">
             <el-select v-model="form.user" placeholder="请选择用户" size="small">
-                <el-option :label="user.name" :value="user.name" v-for="user in lists"></el-option>
+                <el-option :label="user.name" :value="user.name" :key="index" v-for="(user,index) in lists"></el-option>
             </el-select>
             <el-button size="small" @click="selects()" style="margin-left:10px">刷新</el-button>
         </el-form-item>
@@ -84,6 +85,7 @@
           seller: [],
           status: '1',
           avatar: '',
+          siteName: '',
           asin: [
             { required: true, message: 'asin不能为空', trigger: 'blur' },
           ],
@@ -104,7 +106,6 @@
       selects(){
         this.$http.post("/userA/select").then(res=>{
           this.lists=res.data
-          console.log(this.lists)
         })
       },
       submitForm(formName) {

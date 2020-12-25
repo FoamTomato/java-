@@ -19,11 +19,20 @@
             <el-tab-pane label="ASIN查询" name="first" lazy>
               <first></first>
             </el-tab-pane>
-            <el-tab-pane label="ASIN添加" name="second" lazy>
+            <!-- <el-tab-pane label="ASIN添加" name="second" lazy>
               <second></second>
+            </el-tab-pane> -->
+            <el-tab-pane label="侵权词" name="fourth" lazy>
+              <fourth></fourth>
             </el-tab-pane>
-            <el-tab-pane label="用户管理" name="third" lazy>
+            <!-- <el-tab-pane label="用户管理" name="third" lazy>
               <third></third>
+            </el-tab-pane> -->
+            <el-tab-pane label="日本商标局" name="five" lazy>
+            </el-tab-pane>
+            <el-tab-pane label="欧洲商标局" name="six" lazy>
+            </el-tab-pane>
+            <el-tab-pane label="英国商标局" name="seven" lazy>
             </el-tab-pane>
           </el-tabs>
         </template>
@@ -36,24 +45,31 @@ import { ipcRenderer,remote } from 'electron'
 import first from './First.vue'
 import second from './Second.vue'
 import third from './Third.vue'
-
+import fourth from './Fourth.vue'
   export default {
     data() {
       return {
           activeName: 'first',
+          findOne:"",
       };
     },
     components:{
         'first':first,
         'second':second,
-        'third':third
+        'third':third,
+        'fourth':fourth
     },
     created(){
     },
     methods: {
       // 下拉菜单选择
       handleClick(tab, event) {
-        console.log(tab, event);
+        // 页面满足加载，不满足关闭
+        if(tab.name=="five"||tab.name=="six"||tab.name=="seven"){
+          ipcRenderer.send(tab.name)
+        }else{
+          ipcRenderer.send("closeView")
+        }
       },
       // 关闭
       close(){
@@ -66,7 +82,7 @@ import third from './Third.vue'
       // 放大
       plus(){
         // 判断是否最大化
-        console.log(remote.getCurrentWindow().isMaximized())
+        // console.log(remote.getCurrentWindow().isMaximized())
         if(remote.getCurrentWindow().isMaximized()){
           // 复原
           remote.getCurrentWindow().restore();

@@ -2,7 +2,7 @@
     <el-container>
         <el-header style="height:40px">
             <div style="margin-top: 15px;">
-            <el-input placeholder="请用逗号分隔开" v-model="input3" size="small" class="input-with-select">
+            <el-input placeholder="请用逗号分隔开" v-model="input3" @keyup.enter.native="select()" size="small" class="input-with-select">
                 <el-select v-model="selects" slot="prepend" placeholder="请选择">
                     <el-option label="全部" value="0"></el-option>
                     <el-option label="ASIN" value="1"></el-option>
@@ -23,12 +23,6 @@
                     height="78vh"
                     max-height="95vh"
                     style="width: 100%;">
-                    <el-table-column
-                    prop="time"
-                    :formatter="dateFormat"
-                    label="日期"
-                    width="120">
-                    </el-table-column>
                     <el-table-column
                     prop="asin"
                     label="ASIN"
@@ -51,30 +45,44 @@
                     </el-table-column>
                     <el-table-column prop="avatar" label="图片">
                       <template slot-scope="scope">
-                        <el-image  :src="scope.row.avatar" fit="cover" style="width:22px;height:22px" lazy :preview-src-list="lists(scope.row.avatar)">
+                        <el-image  :src="scope.row.avatar" fit="cover" style="width:22px;height:22px" lazy :preview-src-list="listss(scope.row.avatar)">
                           <div slot="error" class="image-slot" style="font-size:20px">
                             <i class="el-icon-picture-outline"></i>
                           </div>
                         </el-image>
                       </template>
                     </el-table-column>
+                    
                     <el-table-column
-                    prop="site"
                     label="站点"
+                    prop="site"
+                    width="120">
+                      <template slot-scope="scope">
+                        {{scope.row.site+siteNames(scope.row.siteName)}}
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column
+                    prop="time"
+                    :formatter="dateFormat"
+                    label="日期"
                     width="120">
                     </el-table-column>
+
+
                     <el-table-column
                     prop="seller"
                     label="卖家">
                     </el-table-column>
-                    <el-table-column
+                    <!-- <el-table-column
                       fixed="right"
                       label="操作"
                       width="100">
                       <template slot-scope="scope">
+                        <el-button @click="updates(scope.row)" type="text" size="small">编辑</el-button>
                         <el-button @click="deletes(scope.row)" type="text" size="small">删除</el-button>
                       </template>
-                    </el-table-column>
+                    </el-table-column> -->
                 </el-table>
                 <el-pagination
                 background
@@ -89,19 +97,98 @@
                 </el-pagination>
             </template>
         </el-main>
+        <el-dialog
+          title="修改"
+          :visible.sync="dialogVisible"
+          width="80%"
+          :before-close="handleClose">
+          <el-row :gutter="20" class="rows">
+            <el-col :span="2">ASIN</el-col>
+            <el-col :span="9"><el-input  size="small"  v-model="form.asin" placeholder="请输入asin"></el-input></el-col>
+            <el-col :span="2">产品名</el-col>
+            <el-col :span="9"><el-input v-model="form.name" size="small" placeholder="请输入产品名"></el-input></el-col>
+          </el-row>
+          
+          <el-row :gutter="20" class="rows">
+            <el-col :span="2">品牌</el-col>
+            <el-col :span="9"><el-input v-model="form.brand" size="small" placeholder="请输入品牌"></el-input></el-col>
+            
+            <el-col :span="2">主卖家</el-col>
+            <el-col :span="9"><el-input v-model="form.seller" size="small"  placeholder="请输入主卖家"></el-input></el-col>
+          </el-row>
+          
+          <el-row :gutter="20" class="rows">
+            <el-col :span="2">站点</el-col>
+            <el-col :span="4">
+              <el-select v-model="form.site" style="width:100%" placeholder="请选择站点" size="small">
+                <el-option label="美国" value="美国"></el-option>
+                <el-option label="加拿大" value="加拿大"></el-option>
+                <el-option label="墨西哥" value="墨西哥"></el-option>
+                <el-option label="英国" value="英国"></el-option>
+                <el-option label="法国" value="法国"></el-option>
+                <el-option label="德国" value="德国"></el-option>
+                <el-option label="荷兰" value="荷兰"></el-option>
+                <el-option label="意大利" value="意大利"></el-option>
+                <el-option label="西班牙" value="西班牙"></el-option>
+                <el-option label="瑞典" value="瑞典"></el-option>
+                <el-option label="澳大利亚" value="澳大利亚"></el-option>
+                <el-option label="印度" value="印度"></el-option>
+                <el-option label="阿联酋" value="阿联酋"></el-option>
+                <el-option label="沙特阿拉伯" value="沙特阿拉伯"></el-option>
+                <el-option label="日本" value="日本"></el-option>
+            </el-select>
+            </el-col>
+            <el-col :span="5">
+              <el-input  size="small"  v-model="form.siteName" style="margin-left:10px;width:95%" placeholder="请输入站点名称"></el-input>
+            </el-col>
+            <el-col :span="2">用户</el-col>
+            <el-col :span="8">
+              <el-select v-model="form.user" placeholder="请选择用户" size="small">
+                    <el-option :label="user.name" :value="user.name" :key="index" v-for="(user,index) in lists"></el-option>
+              </el-select>
+            </el-col>
+          </el-row>
+          <el-upload
+            class="avatar-uploader"
+            :show-file-list="false"
+            :action="$http.defaults.baseURLs+'/upload2'"
+            :on-success="afterUpload"
+          >
+            <img v-if="form.avatar" :src="form.avatar" fit="cover" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon avatars"></i>
+          </el-upload>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="updates2()">修改</el-button>
+          </span>
+        </el-dialog>
     </el-container>
 </template>
 <script>
     export default {
       data() {
         return {
+          lists:[],
           input3:"",
           selects:"0",
           pageNum: 1,
           pageSize: 50,
+          form: {
+            asin:'',
+            name: '',
+            brand: '',
+            seller: '',
+            site: '',
+            user: '',
+            time: '',
+            status: '1',
+            avatar:''
+          },
           // 加载圈
           loading:false,
           total:0,
+          // 弹窗
+          dialogVisible:false,
           tableData: [{
             asin: null,
             brand: null,
@@ -118,6 +205,21 @@
         this.select()
       },
       methods: {
+        // 修改
+        updates(val){
+          this.form=val
+          this.$http.post("/userA/select").then(res=>{
+            this.lists=res.data
+          })
+          this.dialogVisible=true
+        },
+        handleClose(done) {
+            this.$confirm('确认关闭？')
+            .then(_ => {
+                done();
+            })
+            .catch(_ => {});
+        },
         // 查询列表
         select(){
           let data={}
@@ -128,7 +230,9 @@
           this.loading=true
           this.$http.post("/asin/select",data).then(res=>{
             this.loading=false
-            this.total=res.data.length
+            this.$http.post("/asin/select/count",data).then(res=>{
+              this.total=res.data
+            })
             this.tableData=res.data
             if(this.input3!=''&&this.selects=="1"){
               if(res.data.length!=0){
@@ -150,7 +254,7 @@
           this.select()
         },
         // 列表化
-        lists(val){
+        listss(val){
           let list=[]
           list.push(val)
           return list
@@ -159,7 +263,7 @@
         deletes(val){
           this.$confirm(`确认删除${val.asin}?请谨慎操作，不可复原`)
           .then(_ => {
-              this.$http.delete("/asin/deletes/"+val._id,).then(res=>{
+              this.$http.delete("/asin/deletes/"+val._id).then(res=>{
                 if(res.status==200){
                   this.select()
                   this.$message.success(res.data.asin+"已删除")
@@ -172,7 +276,6 @@
         },
         // 时间格式化
         dateFormat(row, column, cellValue, index){
-          console.log(row)
           const daterc = row[column.property]
           if(daterc!=null){
             const dateMat= new Date(parseInt(daterc.replace("/Date(", "").replace(")/", ""), 10));
@@ -185,7 +288,41 @@
             const timeFormat= year + "年" + month + "月" + day + "日";
             return timeFormat;
           }
+        },
+        // 给图片赋值
+        afterUpload(res) {
+          this.form.avatar = res.url;
+        },
+        // 修改
+        updates2(){
+          this.$http.put("asin/"+this.form._id,this.form).then(res=>{
+            if(res.status==200){
+                this.$notify({
+                      title: '成功',
+                      message: `asin：${res.data.asin}修改成功`,
+                      type: 'success',
+                      offset: 25
+                });
+            }else{
+              this.$message.error("出现异常")
+            }
+          })
+          this.dialogVisible = false
+        },
+        // 站点名称展示
+        siteNames(val){
+          if(val==undefined||val==""){
+            return ""
+          }else{
+            return `(${val})`
+          }
         }
       }
     }
   </script>
+  <style>
+  .rows{
+    line-height:40px;
+    margin-bottom:20px
+  }
+  </style>
