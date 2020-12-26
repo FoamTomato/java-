@@ -3,7 +3,7 @@
         <el-header style="height:40px;padding:20px">
             <el-input placeholder="请用逗号分隔开" style="width:30%;margin-right:10px" v-model="input3" @keyup.enter.native="select()" size="small" class="input-with-select"/>
             <el-button size="small" @click="select()">查找</el-button>
-            <!-- <el-button size="small" @click="dialogVisible=true">添加侵权词</el-button> -->
+            <el-button size="small" @click="dialogVisible=true">添加侵权词</el-button>
         </el-header>
         <!-- 78vh/82vh -->
         <el-main>
@@ -29,14 +29,14 @@
                 </el-table-column>
 
 
-                <!-- <el-table-column
+                <el-table-column
                     fixed="right"
                     label="操作"
                     width="100">
                     <template slot-scope="scope">
                         <el-button @click="deletes(scope.row)" type="text" size="small">删除</el-button>
                     </template>
-                </el-table-column> -->
+                </el-table-column>
                 </el-table>
                 <el-pagination
                 background

@@ -1,7 +1,7 @@
 <template>
     <el-container>
         <el-header style="height:40px;padding:20px">
-              <el-button size="small" @click="dialogVisible=true">添加用户</el-button>
+              <el-button size="small" @click="dialogVisible=true">添加投诉人</el-button>
               <el-button size="small" @click="select()">刷新</el-button>
         </el-header>
         <el-main>
@@ -45,14 +45,14 @@
             </template>
         </el-main>
         <el-dialog
-            title="添加用户"
+            title="添加投诉人"
             size="small"
             :visible.sync="dialogVisible"
             width="60%"
             :before-close="handleClose">
             <el-form ref="form" v-loading="loading"  :model="form"  :rules="rules" status-icon label-width="80px" style="margin-top:20px;padding-right:20px" class="demo-ruleForm">
-              <el-form-item label="用户名" prop="name">
-                  <el-input  size="small"  v-model="form.name"  placeholder="请输入用户名"></el-input>
+              <el-form-item label="投诉人名" prop="name">
+                  <el-input  size="small"  v-model="form.name"  placeholder="请输入投诉人名"></el-input>
               </el-form-item>
               <el-form-item label="录入时间">
                   <el-date-picker size="small"
@@ -79,7 +79,7 @@
           },
           rules:{
             name: [
-              { required: true, message: '用户名不能为空', trigger: 'blur' },
+              { required: true, message: '投诉人名不能为空', trigger: 'blur' },
             ]
           },
           tableData: [{
@@ -98,7 +98,7 @@
           this.form.time=Date.now()
       },
       methods: {
-          // 查找用户
+          // 查找投诉人
           select(){
             let data={}
             data["pageSize"]=this.pageSize
@@ -121,7 +121,7 @@
                   if(res.status==200){
                     this.$notify({
                       title: '成功',
-                      message: `用户${res.data.name}添加成功`,
+                      message: `投诉人${res.data.name}添加成功`,
                       type: 'success',
                       offset: 25
                     });

@@ -20,6 +20,7 @@ async function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      webviewTag:true,
       enableRemoteModule: true
     }
   })
@@ -39,11 +40,13 @@ async function createWindow() {
     app.exit()
   })
 
-  const defaultSize = { x: 120, y: 30, width: 894, height: 770}
+  const defaultSize = { x: 130, y: 30, width: 894, height: 770}
 
   var view = null
   var view2 = null
   var view3 = null
+  var view4 = null
+  var view5 = null
 
   ipcMain.on('five',()=>{
     //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +55,7 @@ async function createWindow() {
       view.setAutoResize({ width: true, height: true})
       view.webContents.loadURL('https://www.j-platpat.inpit.go.jp/')
     }
-    defaultSize["width"]=win.getSize()[0]-120
+    defaultSize["width"]=win.getSize()[0]-130
     defaultSize["height"]=win.getSize()[1]-50
     view.setBounds(defaultSize)
     //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +70,7 @@ async function createWindow() {
       view2.setAutoResize({ width: true, height: true})
       view2.webContents.loadURL('https://euipo.europa.eu/eSearch/#basic')
     }
-    defaultSize["width"]=win.getSize()[0]-120
+    defaultSize["width"]=win.getSize()[0]-130
     defaultSize["height"]=win.getSize()[1]-50
     view2.setBounds(defaultSize)
     //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,12 +84,43 @@ async function createWindow() {
       view3.setAutoResize({ width: true, height: true})
       view3.webContents.loadURL('https://trademarks.ipo.gov.uk/ipo-tmtext')
     }
-    defaultSize["width"]=win.getSize()[0]-120
+    defaultSize["width"]=win.getSize()[0]-130
     defaultSize["height"]=win.getSize()[1]-50
     view3.setBounds(defaultSize)
     //////////////////////////////////////////////////////////////////////////////////////////////////////
     win.setBrowserView(view3)
   })
+
+  ipcMain.on('eight',()=>{
+  
+    console.log(123)
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    if(view4==null){
+      view4 = new BrowserView()   //new出对象
+      view4.setAutoResize({ width: true, height: true})
+      view4.webContents.loadURL('http://151.207.240.78:80/bin/gate.exe?f=login&p_lang=english&p_d=trmk',{userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',httpReferrer:"http://151.207.240.78"})
+    }
+    defaultSize["width"]=win.getSize()[0]-130
+    defaultSize["height"]=win.getSize()[1]-50
+    view4.setBounds(defaultSize)
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    win.setBrowserView(view4)
+  })
+
+  ipcMain.on('nine',()=>{
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    if(view5==null){
+      view5 = new BrowserView()   //new出对象
+      view5.setAutoResize({ width: true, height: true})
+      view5.webContents.loadURL('http://www.ic.gc.ca/app/opic-cipo/trdmrks/srch/home?lang=eng')
+    }
+    defaultSize["width"]=win.getSize()[0]-130
+    defaultSize["height"]=win.getSize()[1]-50
+    view5.setBounds(defaultSize)
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    win.setBrowserView(view5)
+  })
+
   ipcMain.on('closeView',()=>{
     win.setBrowserView(null)
   })

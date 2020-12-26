@@ -1,44 +1,42 @@
 <template>
-  <el-container>
-    <el-header style="-webkit-app-region: drag;text-align: right;height:30px;max-height:30px; font-size: 12px;background-color:#065279">
-      <div style="float: left;margin-top:5px;">
-        <img src="../img/logos.png" 
-        style="width: 20px; height: 20px;float: left;">
-        <nobr style="float:right;margin-top:1px;margin-left:7px;font-family: '微软雅黑';text-align:center">数独ASIN管理工具</nobr>
-      </div>
-      <div>
-        <el-button type="text" class="el-icon-remove el-icon-removes" @click="subtract"></el-button>
-        <el-button type="text" class="el-icon-circle-plus el-icon-circle-pluss" @click="plus"></el-button>
-        <el-button type="text" class="el-icon-error el-icon-errors" @click="close"></el-button>
-      </div>
-    </el-header>
     <el-container>
       <el-main style="padding: 5px;">
         <template>
           <el-tabs v-model="activeName" tab-position="left" style="height:92vh" @tab-click="handleClick">
+            <el-tab-pane name="img" disabled="true">
+              <span slot="label">
+                <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+              </span>
+            </el-tab-pane>
             <el-tab-pane label="ASIN查询" name="first" lazy>
               <first></first>
             </el-tab-pane>
-            <!-- <el-tab-pane label="ASIN添加" name="second" lazy>
+            <el-tab-pane label="ASIN添加" name="second" lazy>
               <second></second>
-            </el-tab-pane> -->
+            </el-tab-pane>
             <el-tab-pane label="侵权词" name="fourth" lazy>
               <fourth></fourth>
             </el-tab-pane>
-            <!-- <el-tab-pane label="用户管理" name="third" lazy>
+            <el-tab-pane label="投诉人管理" name="third" lazy>
               <third></third>
-            </el-tab-pane> -->
+            </el-tab-pane>
+            <el-tab-pane label="用户管理" name="users" lazy>
+              <users></users>
+            </el-tab-pane>
             <el-tab-pane label="日本商标局" name="five" lazy>
             </el-tab-pane>
             <el-tab-pane label="欧洲商标局" name="six" lazy>
             </el-tab-pane>
             <el-tab-pane label="英国商标局" name="seven" lazy>
             </el-tab-pane>
+            <el-tab-pane label="美国商标局" name="eight" lazy>
+            </el-tab-pane>
+            <el-tab-pane label="加拿大商标局" name="nine" lazy>
+            </el-tab-pane>
           </el-tabs>
         </template>
       </el-main>
     </el-container>
-  </el-container>
 </template>
 <script>
 import { ipcRenderer,remote } from 'electron'
@@ -46,7 +44,9 @@ import first from './First.vue'
 import second from './Second.vue'
 import third from './Third.vue'
 import fourth from './Fourth.vue'
-  export default {
+import users from './Users.vue'
+
+export default {
     data() {
       return {
           activeName: 'first',
@@ -57,15 +57,26 @@ import fourth from './Fourth.vue'
         'first':first,
         'second':second,
         'third':third,
-        'fourth':fourth
+        'fourth':fourth,
+        'users':users
     },
     created(){
     },
     methods: {
+      logout(){
+        this.$confirm(`确认登出账号?请谨慎操作，不可复原`)
+        .then(_ => {
+          localStorage.users=null
+          localStorage.token =null//浏览器关闭还存在
+          this.$message.success("登出成功")
+          this.$router.push('/login')
+        })
+        .catch(_ => {});
+      },
       // 下拉菜单选择
       handleClick(tab, event) {
         // 页面满足加载，不满足关闭
-        if(tab.name=="five"||tab.name=="six"||tab.name=="seven"){
+        if(tab.name=="five"||tab.name=="six"||tab.name=="seven"||tab.name=="nine"||tab.name=="eight"){
           ipcRenderer.send(tab.name)
         }else{
           ipcRenderer.send("closeView")
@@ -100,7 +111,6 @@ import fourth from './Fourth.vue'
   border-color:#065279;
   color:#fff
 }
-
 .input-with-select>.el-input-group__append:hover{
   background-color: IndianRed;
   border-color:IndianRed;
