@@ -6,13 +6,13 @@
           <el-col :span="6">
             <div style="float: left;margin-top:5px;">
               <img src="./img/logos.png" 
-              style="width: 20px; height: 20px;float: left;">
+              style="width: 20px; height: 20px;float: left;align-items: center;">
               <nobr style="float:right;margin-top:1px;margin-left:7px;font-family: '微软雅黑';text-align:center">数独科技-运营插件工具</nobr>
             </div>
           </el-col>
           <el-col :span="12">
-            <div style="text-align:center;line-height:30px">
-              {{"adminasdfsadfa"}}
+            <div style="text-align:center;line-height:0px">
+              <h3>{{names()}}</h3>
             </div>
           </el-col>
           <el-col :span="6">
@@ -29,7 +29,41 @@
   </div>
 </template>
 <script>
+import { ipcRenderer,remote } from 'electron'
+
 export default{
+    methods:{
+      names(){
+        if(localStorage.users==undefined){
+          return ""
+        }
+        return localStorage.users
+      },
+      // 关闭
+      close(){
+        this.$confirm(`关闭应用？`)
+        .then(_ => {
+          localStorage.clear()
+          ipcRenderer.send('close')
+        })
+        .catch(_ => {});
+      },
+      // 缩小
+      subtract(){
+        remote.getCurrentWindow().minimize()
+      },
+      // 放大
+      plus(){
+        // 判断是否最大化
+        if(remote.getCurrentWindow().isMaximized()){
+          // 复原
+          remote.getCurrentWindow().restore();
+        }else{
+          // 最大化
+          remote.getCurrentWindow().maximize()
+        }
+      }
+    },
     mounted(){
       window.addEventListener('offline', function ($event) { this.$message.error('断网了'); });
       window.addEventListener('online', function ($event) { this.$message.success('来网了'); });

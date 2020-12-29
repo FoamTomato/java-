@@ -31,7 +31,12 @@
                     <el-table-column
                     prop="brand"
                     label="品牌"
+                    :filters="[{text: '有品牌', value: '1'},{text: '无品牌', value: '2'}]"
+                    :filter-method="filterHandler"
                     width="120">
+                      <template slot-scope="scope">
+                        {{scope.row.brand+filterBrand(scope.row.brands)}}
+                      </template>
                     </el-table-column>
                     <el-table-column
                     prop="name"
@@ -77,6 +82,7 @@
                     <el-table-column
                       fixed="right"
                       label="操作"
+                      v-if="auths('ASIN操作')"
                       width="100">
                       <template slot-scope="scope">
                         <el-button @click="updates(scope.row)" type="text" size="small">编辑</el-button>
@@ -111,8 +117,11 @@
           
           <el-row :gutter="20" class="rows">
             <el-col :span="2">品牌</el-col>
-            <el-col :span="9"><el-input v-model="form.brand" size="small" placeholder="请输入品牌"></el-input></el-col>
-            
+            <el-col :span="4"><el-input v-model="form.brand" size="small" placeholder="请输入品牌"></el-input></el-col>
+            <el-col :span="5">
+              <el-radio v-model="form.brands" label="1">有</el-radio>
+              <el-radio v-model="form.brands" label="2">无</el-radio>
+            </el-col>
             <el-col :span="2">主卖家</el-col>
             <el-col :span="9"><el-input v-model="form.seller" size="small"  placeholder="请输入主卖家"></el-input></el-col>
           </el-row>
@@ -177,6 +186,7 @@
             asin:'',
             name: '',
             brand: '',
+            brands: '',
             seller: '',
             site: '',
             user: '',
@@ -197,6 +207,7 @@
             site: null,
             status: null,
             time: null,
+            brands: null,
             user: null,
           }]
         }
@@ -205,6 +216,13 @@
         this.select()
       },
       methods: {
+        auths(str) {
+          return localStorage.auths.indexOf(str)==-1?false:true  // -1 说明array中不存在id为str的对象
+        },
+        // 品牌过滤器
+        filterHandler(value, row, column){
+          return row["brands"] === value;
+        },
         // 修改
         updates(val){
           this.form=val
@@ -258,6 +276,15 @@
           let list=[]
           list.push(val)
           return list
+        },
+        // 筛选
+        filterBrand(val){
+          console.log(val)
+          if(val==undefined){
+            return ""
+          }else{
+            return val==1?"(有品牌)":"(无品牌)"
+          }
         },
         // 删除
         deletes(val){

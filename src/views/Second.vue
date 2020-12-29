@@ -1,5 +1,5 @@
 <template>
-    <el-form ref="form" v-loading="loading"  :model="form"  :rules="rules" status-icon label-width="80px" style="margin-top:20px;padding-right:20px" class="demo-ruleForm">
+    <el-form ref="form" v-loading="loading"  :model="form"  :rules="rules" status-icon label-width="80px" style="padding-top:20px;padding-right:20px;height:85vh;overflow-y: auto;" class="demo-ruleForm">
         <el-form-item label="ASIN" prop="asin">
             <el-input  size="small"  v-model="form.asin"  placeholder="请输入asin"></el-input>
         </el-form-item>
@@ -8,6 +8,10 @@
         </el-form-item>
         <el-form-item label="品牌" prop="brand">
             <el-input v-model="form.brand" size="small"  placeholder="请输入品牌"></el-input>
+            <el-form-item prop="brands">
+              <el-radio v-model="form.brands" label="1">有</el-radio>
+              <el-radio v-model="form.brands" label="2">无</el-radio>
+            </el-form-item>
         </el-form-item>
         <el-form-item label="主卖家" prop="seller">
             <el-input v-model="form.seller" size="small"  placeholder="请输入主卖家"></el-input>
@@ -40,7 +44,7 @@
         </el-form-item>
         <el-form-item label="录入时间">
             <el-date-picker size="small"
-                v-model="form.time" disabled>
+                v-model="form.time" :disabled="true">
             </el-date-picker>
         </el-form-item>
         <el-form-item label="产品图片" prop="avatar">
@@ -74,7 +78,8 @@
           user: '',
           time: '',
           status: '1',
-          avatar:''
+          avatar:'',
+          brands: ''
         },
         // 加载圈
         loading:false,
@@ -86,6 +91,7 @@
           status: '1',
           avatar: '',
           siteName: '',
+          brands: '',
           asin: [
             { required: true, message: 'asin不能为空', trigger: 'blur' },
           ],

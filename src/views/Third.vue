@@ -1,8 +1,9 @@
 <template>
     <el-container>
         <el-header style="height:40px;padding:20px">
+              <el-input placeholder="请用逗号分隔开" style="width:30%;margin-right:10px" v-model="input3" @keyup.enter.native="select()" size="small" class="input-with-select"/>
+              <el-button size="small" @click="select()">查询</el-button>
               <el-button size="small" @click="dialogVisible=true">添加投诉人</el-button>
-              <el-button size="small" @click="select()">刷新</el-button>
         </el-header>
         <el-main>
             <template>
@@ -56,7 +57,7 @@
               </el-form-item>
               <el-form-item label="录入时间">
                   <el-date-picker size="small"
-                      v-model="form.time" disabled>
+                      v-model="form.time" :disabled="true">
                   </el-date-picker>
               </el-form-item>
               <el-form-item>
@@ -90,7 +91,9 @@
           loading:false,
           pageSize:50,
           pageNum:1,
-          total:0
+          total:0,
+          // 查找条件
+          input3: ''
         }
       },
       created(){
@@ -103,6 +106,7 @@
             let data={}
             data["pageSize"]=this.pageSize
             data["pageNum"]=this.pageNum
+            data["input3"]=this.input3
             this.loading=true
             this.$http.post("/asinUser/select",data).then(res=>{
               this.loading=false
@@ -175,7 +179,6 @@
         },
         // 时间格式化
         dateFormat(row, column, cellValue, index){
-          console.log(row)
           const daterc = row[column.property]
           if(daterc!=null){
             const dateMat= new Date(parseInt(daterc.replace("/Date(", "").replace(")/", ""), 10));

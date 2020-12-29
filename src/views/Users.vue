@@ -3,7 +3,7 @@
         <el-header style="height:40px;padding:20px">
             <el-input placeholder="请用逗号分隔开" style="width:30%;margin-right:10px" v-model="input3" @keyup.enter.native="select()" size="small" class="input-with-select"/>
             <el-button size="small" @click="select()">查找</el-button>
-            <el-button size="small" @click="title=0;dialogVisible=true">添加用户</el-button>
+            <el-button size="small" @click="add()">添加用户</el-button>
         </el-header>
         <el-main>
             <template>
@@ -156,7 +156,14 @@ const cityOptions = ['ASIN查询', 'ASIN操作', 'ASIN添加', '侵权词', '侵
                 this.total=res.data
               })
               this.tableData=res.data
+              this.$forceUpdate()
             })
+          },
+          // 添加用户
+          add(){
+            this.title=0;
+            this.dialogVisible=true
+            this.form = this.$options.data().form
           },
           submitForm(formName) {
             if(this.form.username==""){
@@ -216,19 +223,8 @@ const cityOptions = ['ASIN查询', 'ASIN操作', 'ASIN添加', '侵权词', '侵
         },
         // 修改
         updates(val){
-            
-        //   let data={}
-        //   data["pageSize"]=this.pageSize
-        //   data["pageNum"]=this.pageNum
-        //   data["input3"]=val.username
-        //   this.loading=true
-        //   this.$http.post("/asinUsers/select",data).then(res=>{
-        //     this.loading=false
-        //     console.log(res.data)
-        //     this.form=res.data[0]
-        //   })
           // 值复制更新
-        Object.assign(this.form,val)
+          Object.assign(this.form,val)
           this.dialogVisible=true
         },
         // 删除
@@ -303,6 +299,7 @@ const cityOptions = ['ASIN查询', 'ASIN操作', 'ASIN添加', '侵权词', '侵
             if (valid) {
                 this.loading=true
                 this.$http.put("asinUsers/"+this.form._id,this.form).then(res=>{
+                    this.loading=false
                     if(res.status==200){
                         this.$notify({
                             title: '成功',
@@ -310,9 +307,12 @@ const cityOptions = ['ASIN查询', 'ASIN操作', 'ASIN添加', '侵权词', '侵
                             type: 'success',
                             offset: 25
                         });
+                        // 更新权限 
+                        localStorage.auths =this.form.auths
+                        localStorage.avatar =this.form.avatar
                         this.select()
                     }else{
-                    this.$message.error("出现异常")
+                      this.$message.error("出现异常")
                     }
                 })
                 this.dialogVisible = false

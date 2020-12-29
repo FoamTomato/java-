@@ -3,7 +3,7 @@
         <el-header style="height:40px;padding:20px">
             <el-input placeholder="请用逗号分隔开" style="width:30%;margin-right:10px" v-model="input3" @keyup.enter.native="select()" size="small" class="input-with-select"/>
             <el-button size="small" @click="select()">查找</el-button>
-            <el-button size="small" @click="dialogVisible=true">添加侵权词</el-button>
+            <el-button size="small" v-if="auths('侵权词操作')" @click="dialogVisible=true">添加侵权词</el-button>
         </el-header>
         <!-- 78vh/82vh -->
         <el-main>
@@ -32,6 +32,7 @@
                 <el-table-column
                     fixed="right"
                     label="操作"
+                    v-if="auths('侵权词操作')"
                     width="100">
                     <template slot-scope="scope">
                         <el-button @click="deletes(scope.row)" type="text" size="small">删除</el-button>
@@ -63,7 +64,7 @@
               </el-form-item>
               <el-form-item label="录入时间">
                   <el-date-picker size="small"
-                      v-model="form.time" disabled>
+                      v-model="form.time" :disabled="true">
                   </el-date-picker>
               </el-form-item>
               <el-form-item>
@@ -106,6 +107,9 @@
           this.form.time=Date.now()
       },
       methods: {
+          auths(str) {
+            return localStorage.auths.indexOf(str)==-1?false:true  // -1 说明array中不存在id为str的对象
+          },
           // 查找用户
           select(){
             let data={}
@@ -184,7 +188,6 @@
         },
         // 时间格式化
         dateFormat(row, column, cellValue, index){
-          console.log(row)
           const daterc = row[column.property]
           if(daterc!=null){
             const dateMat= new Date(parseInt(daterc.replace("/Date(", "").replace(")/", ""), 10));

@@ -93,7 +93,6 @@ async function createWindow() {
 
   ipcMain.on('eight',()=>{
   
-    console.log(123)
     //////////////////////////////////////////////////////////////////////////////////////////////////////
     if(view4==null){
       view4 = new BrowserView()   //new出对象

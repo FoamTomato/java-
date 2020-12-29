@@ -1,6 +1,6 @@
 {
-  "name": "Asin-Server",
-  "version": "0.0.2",
+  "name": "Asin",
+  "version": "1.0.0",
   "author": "Asin查询工具",
   "description": "Foam",
   "private": true,
@@ -14,8 +14,10 @@
   },
   "main": "background.js",
   "dependencies": {
+    "animate.css": "^4.1.1",
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
+    "electron-find": "^1.0.6",
     "element-ui": "^2.4.5",
     "http-assert": "^1.4.1",
     "node-cron": "^2.0.3",

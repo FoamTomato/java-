@@ -3,35 +3,41 @@
       <el-main style="padding: 5px;">
         <template>
           <el-tabs v-model="activeName" tab-position="left" style="height:92vh" @tab-click="handleClick">
-            <el-tab-pane name="img" disabled="true">
+            <el-tab-pane name="img">
               <span slot="label">
-                <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                <el-avatar shape="square"  v-if="avatar()==undefined" style="float:left" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                <el-avatar  v-if="avatar()!=undefined" style="float:left;margin-left:20%" shape="square" :src="avatar()" >
+                  <img src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
+                </el-avatar>
+                <a @click="logout" style="font-size:10px;">切换</a>
               </span>
+
+              <img src="../img/sudo.png" style="width:100%;margin-top:20vh"/>
             </el-tab-pane>
-            <el-tab-pane label="ASIN查询" name="first" lazy>
+            <el-tab-pane v-if="auths('ASIN查询')" label="ASIN查询" name="first" lazy>
               <first></first>
             </el-tab-pane>
-            <el-tab-pane label="ASIN添加" name="second" lazy>
+            <el-tab-pane v-if="auths('ASIN添加')" label="ASIN添加" name="second" lazy>
               <second></second>
             </el-tab-pane>
-            <el-tab-pane label="侵权词" name="fourth" lazy>
+            <el-tab-pane v-if="auths('侵权词')" label="侵权词" name="fourth" lazy>
               <fourth></fourth>
             </el-tab-pane>
-            <el-tab-pane label="投诉人管理" name="third" lazy>
+            <el-tab-pane v-if="auths('投诉人管理')" label="投诉人管理" name="third" lazy>
               <third></third>
             </el-tab-pane>
-            <el-tab-pane label="用户管理" name="users" lazy>
+            <el-tab-pane v-if="auths('用户管理')" label="用户管理" name="users" lazy>
               <users></users>
             </el-tab-pane>
-            <el-tab-pane label="日本商标局" name="five" lazy>
+            <el-tab-pane v-if="auths('日本商标局')" label="日本商标局" name="five" lazy>
             </el-tab-pane>
-            <el-tab-pane label="欧洲商标局" name="six" lazy>
+            <el-tab-pane v-if="auths('欧洲商标局')" label="欧洲商标局" name="six" lazy>
             </el-tab-pane>
-            <el-tab-pane label="英国商标局" name="seven" lazy>
+            <el-tab-pane v-if="auths('英国商标局')" label="英国商标局" name="seven" lazy>
             </el-tab-pane>
-            <el-tab-pane label="美国商标局" name="eight" lazy>
+            <el-tab-pane v-if="auths('美国商标局')" label="美国商标局" name="eight" lazy>
             </el-tab-pane>
-            <el-tab-pane label="加拿大商标局" name="nine" lazy>
+            <el-tab-pane v-if="auths('加拿大商标局')" label="加拿大商标局" name="nine" lazy>
             </el-tab-pane>
           </el-tabs>
         </template>
@@ -40,6 +46,7 @@
 </template>
 <script>
 import { ipcRenderer,remote } from 'electron'
+import { FindInPage } from 'electron-find'
 import first from './First.vue'
 import second from './Second.vue'
 import third from './Third.vue'
@@ -61,13 +68,23 @@ export default {
         'users':users
     },
     created(){
+      // 查询所有的用户权限
     },
     methods: {
+      auths(str) {
+        return localStorage.auths.indexOf(str)==-1?false:true  // -1 说明array中不存在id为str的对象
+      },
+      avatar(){
+        return localStorage.avatar
+      },
+      updatese(){
+        this.$forceUpdate()
+      },
+      // 换号
       logout(){
-        this.$confirm(`确认登出账号?请谨慎操作，不可复原`)
+        this.$confirm(`确认切换账号?请谨慎操作，不可复原`)
         .then(_ => {
-          localStorage.users=null
-          localStorage.token =null//浏览器关闭还存在
+          localStorage.clear()
           this.$message.success("登出成功")
           this.$router.push('/login')
         })
@@ -77,35 +94,29 @@ export default {
       handleClick(tab, event) {
         // 页面满足加载，不满足关闭
         if(tab.name=="five"||tab.name=="six"||tab.name=="seven"||tab.name=="nine"||tab.name=="eight"){
+          this.finds()
           ipcRenderer.send(tab.name)
         }else{
           ipcRenderer.send("closeView")
         }
       },
-      // 关闭
-      close(){
-        ipcRenderer.send('close')
-      },
-      // 缩小
-      subtract(){
-        remote.getCurrentWindow().minimize()
-      },
-      // 放大
-      plus(){
-        // 判断是否最大化
-        // console.log(remote.getCurrentWindow().isMaximized())
-        if(remote.getCurrentWindow().isMaximized()){
-          // 复原
-          remote.getCurrentWindow().restore();
-        }else{
-          // 最大化
-          remote.getCurrentWindow().maximize()
-        }
+      finds(){
+        // 配置查找窗口相对于父级定位节点的偏移量
+        let findInPage = new FindInPage(window, {
+            offsetTop: 20,
+            offsetRight: 10
+        })
+        console.log(123)
+        findInPage.openFindWindow()
       }
     }
   };
 </script>
 <style>
+.el-avatar--square {
+  border: 1px solid #eef1f3;
+  box-shadow:0px 10px 5px -10px #000;
+}
 .input-with-select>.el-input-group__append{
   background-color: #065279;
   border-color:#065279;
@@ -121,6 +132,9 @@ export default {
 }
 .input-with-select .el-input-group__prepend {
   background-color: #fff;
+}
+.el-avatar>img {
+  width:100%
 }
 .el-header {
   color: white;
